@@ -48,14 +48,14 @@ public class RocKeel
         //roc.buildClassClassRoc(matrix,1,2);
         
         roc.buildTwoClassRoc(matrix);
-        double auc= roc.rocArea();
         
         String [] curves = new String[1];
         
         curves[0]=roc.getCoord();
         
-        String salida=rf.printLatexHeader("TRAINING", "TST");
+        String salida=rf.printLatexHeader("TRAINING", "TRA");
         salida+=rf.printROC(curves, curves.length);
+        salida+=rf.printAUC(roc.auc);
         salida+=rf.printLatexBody("Prob-salidaNB.tra", "TRA");
         salida+=rf.printLatexFooter();
         

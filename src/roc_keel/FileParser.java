@@ -85,6 +85,7 @@ public class FileParser
                 "\\hfill \\break\n" +
                 file+" ROC curve.\n" +
                 "File: "+name+"\n"+
+                "\\hfill \\break\n"+
                 "\\hfill \\break\n";
     }
     
@@ -93,6 +94,13 @@ public class FileParser
         return  "\\hfill \\break\n" +
                 file+" ROC curve.\n" +
                 "File: "+name+"\n"+
+                "\\hfill \\break\n";
+    }
+    
+    public String printAUC(Double auc)
+    {
+        return  "\\hfill \\break\n" +
+                " AUC:"+auc+"\n" +
                 "\\hfill \\break\n";
     }
     

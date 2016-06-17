@@ -18,6 +18,8 @@ public class RocCoord
    protected int fp;
    protected int tn;
    protected int fn;
+   protected double auc;
+   
    protected String coord;
    
    
@@ -33,48 +35,6 @@ public class RocCoord
    public String getCoord()
    {
        return this.coord;
-   }
-   
-   public void buildClassClassRoc(String[][] matrix, int classA, int classB)
-   {
-       boolean[] success= new boolean[matrix.length];
-       char [] trueClass= new char [matrix.length];   
-       
-       for(int i=1; i<matrix.length-1; i++)
-       {
-           
-          if(matrix[i][0].equals(matrix[0][classA]) && Double.parseDouble(matrix[i][classA])>Double.parseDouble(matrix[i][classB]))
-          {
-             this.tp++;
-             success[i]=true;
-             trueClass[i]='P';
-          }
-          else if(matrix[i][0].equals(matrix[0][classA]) && Double.parseDouble(matrix[i][classA])<Double.parseDouble(matrix[i][classB]))
-          {
-              this.fp++;
-              success[i]=false;
-              trueClass[i]='P';  
-          } 
-          else if(matrix[i][0].equals(matrix[0][classB]) && Double.parseDouble(matrix[i][classB])>Double.parseDouble(matrix[i][classA]))
-          {
-              this.tn++;
-              success[i]=true;
-              trueClass[i]='N';
-          }
-          else if(matrix[i][0].equals(matrix[0][classB]) && Double.parseDouble(matrix[i][classB])<Double.parseDouble(matrix[i][classA]))
-          {
-              this.fn++;
-              success[i]=false;
-              trueClass[i]='N';
-          }
-          else
-          {
-              //case for a different class than classA and classB
-              trueClass[i]='X';
-          }
-       }
-       
-       computeCoordsRoc(success,trueClass);
    }
    
    public void buildTwoClassRoc(String[][] matrix)
@@ -168,6 +128,12 @@ public class RocCoord
        double moveY=1.0/(this.tp+this.fn);
        double x=0;
        double y=0;
+       double auc=0;
+       double width=0;
+       double heightTriangle=0;
+       double heightRectangle=0;
+       double htOld;
+       double hrOld;
        
        this.coord="coordinates { (0,0)";
        
@@ -185,41 +151,49 @@ public class RocCoord
            {
                //this.coord+="("+(x+=moveX)+","+y+")";
                x+=moveX;
+               width=(x-width);
            }
            //false negative
            if(success[i]==false && trueClass[i]=='P')
            {
+               
                this.coord+="("+(x+=moveX)+","+y+")";
+               
+               htOld=heightTriangle;
+               hrOld=heightRectangle;
+               heightTriangle=y-htOld;
+               heightRectangle=y-(hrOld+htOld); 
+               auc+=(double)(((width*heightTriangle)/2)+(width*heightRectangle));
            }
            //false negative
            else if(success[i]==false && trueClass[i]=='N')
-           {
+           {    
+                
+                    
                this.coord+="("+x+","+(y+=moveY)+")";
+               
+               htOld=heightTriangle;
+               hrOld=heightRectangle;
+               width=(x-width);              
+               heightTriangle=(y)-(hrOld+htOld);
+               heightRectangle=hrOld+htOld;
+               
+               auc+=(double)(((width*heightTriangle)/2)+(width*heightRectangle)); 
            }
-       }       
+       }    
+       
+       
       this.coord+=" };";
-      
+      this.auc=auc;
       isPerfect(this.coord);
-   }
-   
-   public double rocArea() 
-   {
-       double recall=0;
-       double specificity=0;
-       
-       specificity=((double)this.tn/((double)this.fp+(double)this.tn));
-       recall=((double)this.tp/((double)this.tp+(double)this.fn));
-       
-       return (double)(recall+specificity)/2;  
-   }
-   
-   
+   }  
    
    public void isPerfect(String coord)
    {
        if(coord.equals("coordinates { (0,0) };"))
        {
            this.coord="coordinates { (0,0)(0,1)(1,1)};";
+           this.auc=1;
        }
    }
 }
