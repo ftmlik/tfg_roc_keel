@@ -63,7 +63,7 @@ public class FileParser
         String matrix [][];
         matrix= new String [this.rows][this.columns];
         
-        for(int i=0; i<this.lines.size()-1; i++)
+        for(int i=0; i<this.lines.size(); i++)
         {
             String[] cols = lines.get(i).trim().split("\\s+");
      
@@ -75,7 +75,7 @@ public class FileParser
         return matrix;
     }
     
-    public String printLatexHeader(String name, String file)
+    public String printLatexHeader(String file)
     {
         return  "\\documentclass{article}\n" +
                 "\\usepackage{pgfplots}\n" +
@@ -83,17 +83,15 @@ public class FileParser
                 "\\begin{document}\n" +
                 "\\maketitle\n" +
                 "\\hfill \\break\n" +
-                file+" ROC curve.\n" +
-                "File: "+name+"\n"+
+                "File: "+file+"\n"+
                 "\\hfill \\break\n"+
                 "\\hfill \\break\n";
     }
     
-    public String printLatexBody(String name, String file)
+    public String printLatexBody(String file)
     {
         return  "\\hfill \\break\n" +
-                file+" ROC curve.\n" +
-                "File: "+name+"\n"+
+                "File: "+file+"\n"+
                 "\\hfill \\break\n";
     }
     
@@ -104,7 +102,21 @@ public class FileParser
                 "\\hfill \\break\n";
     }
     
-    public String printROC(String [] rocCoords, int numROC)
+    
+    public String printROC(String coords)
+    {
+        
+        return  "\\begin{tikzpicture}\n" +
+                "\\begin{axis} [xlabel=False positive rate,\n" +
+                "ylabel=True positive rate,"+ 
+                "axis x line=bottom,\n" +
+                "axis y line=left]\n"+
+                "\\addplot "+coords+
+                "\\end{axis}\n" +
+                "\\end{tikzpicture}";
+    }
+    
+    public String printROCS(String [] rocCoords, int numROC)
     {
         String rocs ="";
         
@@ -115,7 +127,9 @@ public class FileParser
         
         return  "\\begin{tikzpicture}\n" +
                 "\\begin{axis} [xlabel=False positive rate,\n" +
-                "ylabel=True positive rate]\n"+
+                "ylabel=True positive rate,"+ 
+                "axis x line=bottom,\n" +
+                "axis y line=left]\n"+
                 rocs+
                 "\\end{axis}\n" +
                 "\\end{tikzpicture}";

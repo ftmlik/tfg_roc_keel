@@ -22,11 +22,19 @@ public class RocKeel
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException 
-    {
+    { 
+      /*
         // The text file location 
-        String filename = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/MLP/prob.tst";
-        String filename2 = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/C45/Prob-resultC45.tst";
+        String filename = "/Users/joseadiazg/Desktop/TFG/roc_keel/input/sencillo.tst";
+        //String filename = "/Users/joseadiazg/Desktop/TFG/roc_keel/input/prob.tst";
+        //String filename = "/Users/joseadiazg/Desktop/TFG/roc_keel/input/iout.tra";
+        //String filename2 = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/KNN/Prob-resultadoKNN.tra";
+        //String filename2 = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/SMO/Prob-salidaSMO.tst";
+        String filename2 = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/NB/Prob-salidaNB.tra";
+        
+      
         FileParser rf = new FileParser(filename);  
+        
         
         FileParser rf2 = new FileParser(filename2);
         
@@ -43,26 +51,116 @@ public class RocKeel
         
         
         
-        //roc.buildTwoClassRoc(matrix);
+        roc.buildTwoClassRoc(matrix);
         
         //roc.buildClassClassRoc(matrix,1,2);
         
-        roc.buildTwoClassRoc(matrix);
+        //roc.buildTwoClassRoc(matrix2);
         
+        
+        //roc.buildClassVsAllClassRoc(matrix2, 2);
+       
         String [] curves = new String[1];
+     
         
-        curves[0]=roc.getCoord();
+        */
+        String testFile = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/NB/Prob-salidaNB.tst";
+        String traFile  = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/NB/Prob-salidaNB.tra";
+        int nclass=0;
+        String [] curvesTra;
+        String [] curvesTest;
+        String salida;
         
-        String salida=rf.printLatexHeader("TRAINING", "TRA");
-        salida+=rf.printROC(curves, curves.length);
+        double [] aucTra;
+        double [] aucTest;
+        boolean twoClass=true;
+        FileParser test = new FileParser(testFile);  
+        FileParser tra = new FileParser(traFile);
+        RocCoord rocTest = new RocCoord();
+        RocCoord rocTra = new RocCoord();
+        
+        String matrixTest [][] = new String [test.rows][test.columns];
+        
+        matrixTest=test.buildMatrix();
+        
+        String matrixTra [][] = new String[tra.rows][tra.columns];
+        
+        matrixTra=tra.buildMatrix();
+        
+        //get the num of classes
+               
+        nclass=tra.columns-1;
+        curvesTra= new String[nclass];
+        curvesTest= new String[nclass];
+        aucTra = new double[nclass];
+        aucTest = new double[nclass];
+        
+        
+        if(nclass==2)
+        {
+            rocTest.buildTwoClassRoc(matrixTest);
+            rocTra.buildTwoClassRoc(matrixTra);
+        }
+        else
+        {
+            twoClass=false;
+            for(int i=0; i<nclass; i++)
+            {
+                rocTra.buildClassVsAllClassRoc(matrixTra, i+1);
+                curvesTra[i]=rocTra.getCoord();
+                aucTra[i]=rocTra.auc;
+                
+                rocTest.buildClassVsAllClassRoc(matrixTest, i+1);
+                curvesTest[i]=rocTest.getCoord();
+                aucTest[i]=rocTest.auc;
+            }
+        }
+        
+        if(twoClass)
+        {
+            salida=test.printLatexHeader("TEST");
+            salida+=test.printROC(rocTest.getCoord());  
+            salida+=test.printAUC(rocTest.auc);
+            
+            salida+=test.printLatexBody("TRAINING");
+            salida+=tra.printROC(rocTra.getCoord());
+            salida+=tra.printAUC(rocTra.auc);
+            salida+=test.printLatexFooter();
+        }
+        else
+        {
+            salida=test.printLatexHeader("TEST");
+            for(int i=0; i<nclass; i++)
+            {
+                salida+=test.printROC(curvesTest[i]);  
+                salida+=test.printAUC(aucTest[i]); 
+            }
+            salida+=test.printROCS(curvesTest, nclass);
+            salida+=test.printLatexBody("TRAINING");
+            
+            for(int i=0; i<nclass; i++)
+            {
+                salida+=tra.printROC(curvesTra[i]);  
+                salida+=tra.printAUC(aucTra[i]); 
+            }
+            salida+=tra.printROCS(curvesTra, nclass);
+            salida+=test.printLatexFooter();
+            
+        }
+        
+
+        /*curves[0]=roc.getCoord();
+        
+        String salida=rf.printLatexHeader("TRA");
+        salida+=rf.printROCS(curves, curves.length);
         salida+=rf.printAUC(roc.auc);
-        salida+=rf.printLatexBody("Prob-salidaNB.tra", "TRA");
-        salida+=rf.printLatexFooter();
+        salida+=rf.printLatexBody("TRA");
+        salida+=rf.printLatexFooter();*/
         
         try
         {
             FileWriter fichero = null;
-            fichero = new FileWriter("/Users/joseadiazg/Desktop/salida.tex");
+            fichero = new FileWriter("/Users/joseadiazg/Desktop/TFG/roc_keel/output/salida3.tex");
             BufferedWriter out = new BufferedWriter(fichero);
             out.write(salida);
             out.close();
