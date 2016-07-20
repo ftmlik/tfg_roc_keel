@@ -1,0 +1,3 @@
+name= ROC configuration
+inputData = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/NB/Prob-salidaNB.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/NB/Prob-salidaNB.tra"
+outputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/output/salidascriptNB.tex"  

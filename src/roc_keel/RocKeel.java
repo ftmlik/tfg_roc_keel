@@ -1,15 +1,38 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/***********************************************************************
+
+	This file is part of KEEL-software, the Data Mining tool for regression, 
+	classification, clustering, pattern mining and so on.
+
+	Copyright (C) 2004-2010
+	
+	F. Herrera (herrera@decsai.ugr.es)
+    L. Sánchez (luciano@uniovi.es)
+    J. Alcalá-Fdez (jalcala@decsai.ugr.es)
+    S. García (sglopez@ujaen.es)
+    A. Fernández (alberto.fernandez@ujaen.es)
+    J. Luengo (julianlm@decsai.ugr.es)
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see http://www.gnu.org/licenses/
+  
+**********************************************************************/
+
 package roc_keel;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import org.core.Files;
 
 /**
  *
@@ -17,55 +40,25 @@ import java.io.PrintWriter;
  */
 public class RocKeel
 {
-
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException 
     { 
-      /*
-        // The text file location 
-        String filename = "/Users/joseadiazg/Desktop/TFG/roc_keel/input/sencillo.tst";
-        //String filename = "/Users/joseadiazg/Desktop/TFG/roc_keel/input/prob.tst";
-        //String filename = "/Users/joseadiazg/Desktop/TFG/roc_keel/input/iout.tra";
-        //String filename2 = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/KNN/Prob-resultadoKNN.tra";
-        //String filename2 = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/SMO/Prob-salidaSMO.tst";
-        String filename2 = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/NB/Prob-salidaNB.tra";
         
+        String configuration="";
       
-        FileParser rf = new FileParser(filename);  
+        if (args.length != 1)
+        {
+            System.err.println("Error. A parameter is only needed.");	
+        }
+        else
+        {
+            configuration=args[0];
+        }
         
-        
-        FileParser rf2 = new FileParser(filename2);
-        
-        
-        String matrix [][] = new String [rf.rows][rf.columns];
-        
-        matrix=rf.buildMatrix();
-        
-        String matrix2 [][] = new String[rf2.rows][rf2.columns];
-        
-        matrix2=rf2.buildMatrix();
-        
-        RocCoord roc = new RocCoord();
-        
-        
-        
-        roc.buildTwoClassRoc(matrix);
-        
-        //roc.buildClassClassRoc(matrix,1,2);
-        
-        //roc.buildTwoClassRoc(matrix2);
-        
-        
-        //roc.buildClassVsAllClassRoc(matrix2, 2);
-       
-        String [] curves = new String[1];
-     
-        
-        */
-        String testFile = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/NB/Prob-salidaNB.tst";
-        String traFile  = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/NB/Prob-salidaNB.tra";
+        Files file = new Files();
+        file.readConfiguracion(configuration);
         int nclass=0;
         String [] curvesTra;
         String [] curvesTest;
@@ -74,20 +67,15 @@ public class RocKeel
         double [] aucTra;
         double [] aucTest;
         boolean twoClass=true;
-        FileParser test = new FileParser(testFile);  
-        FileParser tra = new FileParser(traFile);
+        FileParser test = new FileParser(file.getTestFile());  
+        FileParser tra = new FileParser(file.getTrainFile());
         RocCoord rocTest = new RocCoord();
         RocCoord rocTra = new RocCoord();
+
         
-        String matrixTest [][] = new String [test.rows][test.columns];
+        test.buildMatrix();
         
-        matrixTest=test.buildMatrix();
-        
-        String matrixTra [][] = new String[tra.rows][tra.columns];
-        
-        matrixTra=tra.buildMatrix();
-        
-        //get the num of classes
+        tra.buildMatrix();
                
         nclass=tra.columns-1;
         curvesTra= new String[nclass];
@@ -98,19 +86,19 @@ public class RocKeel
         
         if(nclass==2)
         {
-            rocTest.buildTwoClassRoc(matrixTest);
-            rocTra.buildTwoClassRoc(matrixTra);
+            rocTest.buildTwoClassRoc(test.getProbabilities(),test.getRealClasses());
+            rocTra.buildTwoClassRoc(tra.getProbabilities(),tra.getRealClasses());
         }
         else
         {
             twoClass=false;
             for(int i=0; i<nclass; i++)
             {
-                rocTra.buildClassVsAllClassRoc(matrixTra, i+1);
+                rocTra.buildClassVsAllClassRoc(tra.getProbabilities(),tra.getRealClasses(),tra.getDifferentClasses(), i);
                 curvesTra[i]=rocTra.getCoord();
                 aucTra[i]=rocTra.auc;
                 
-                rocTest.buildClassVsAllClassRoc(matrixTest, i+1);
+                rocTest.buildClassVsAllClassRoc(test.getProbabilities(),test.getRealClasses(), test.getDifferentClasses(), i);
                 curvesTest[i]=rocTest.getCoord();
                 aucTest[i]=rocTest.auc;
             }
@@ -147,20 +135,11 @@ public class RocKeel
             salida+=test.printLatexFooter();
             
         }
-        
-
-        /*curves[0]=roc.getCoord();
-        
-        String salida=rf.printLatexHeader("TRA");
-        salida+=rf.printROCS(curves, curves.length);
-        salida+=rf.printAUC(roc.auc);
-        salida+=rf.printLatexBody("TRA");
-        salida+=rf.printLatexFooter();*/
-        
+       
         try
         {
             FileWriter fichero = null;
-            fichero = new FileWriter("/Users/joseadiazg/Desktop/TFG/roc_keel/output/salida3.tex");
+            fichero = new FileWriter(file.getOutFile());
             BufferedWriter out = new BufferedWriter(fichero);
             out.write(salida);
             out.close();
@@ -170,6 +149,5 @@ public class RocKeel
         {
             e.printStackTrace();
         }
-    }  
-        
+    }    
 }
