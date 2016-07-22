@@ -49,24 +49,8 @@ public class Files{
  * Implements methods to manage data files
  * </p>
  */
-    protected String trainFile;
-    protected String testFile;
-    protected String outFile;
 
 
-    public String getTrainFile()
-    {
-        return trainFile;
-    }
-    
-    public String getTestFile()
-    {
-        return testFile;
-    }
-    public String getOutFile()
-    {
-        return outFile;
-    }
     /**
      * <p>
      * Read a file and returns the content
@@ -74,8 +58,7 @@ public class Files{
      * @param fileName Name of the file to read
      * @return A string with the content of the file
      */
-    public static String readFile(String fileName) 
-    {
+    public static String readFile(String fileName) {
         String content = "";
         try {
                 FileInputStream fis = new FileInputStream(fileName);
@@ -138,61 +121,6 @@ public class Files{
                 System.exit(-1);
             }
     }
-    
-    /** 
-     * Reads configuration script, and extracts its contents.
-     * 
-     * @param script Name of the configuration script  
-     * 
-     */	
-    public void readConfiguracion (String script) 
-    {
-
-        String fichero, linea, token;
-        StringTokenizer lineasFichero, tokens;
-        byte line[];
-        int i, j;
-
-        fichero = Files.readFile(script);
-        lineasFichero = new StringTokenizer (fichero,"\n");
-
-        lineasFichero.nextToken();
-        linea = lineasFichero.nextToken();
-
-        tokens = new StringTokenizer (linea, "=");
-        tokens.nextToken();
-        token = tokens.nextToken();
-
-        //Getting the names of training and test files
-        //reference file will be used as comparision
-
-        line = token.getBytes();
-        for (i=0; line[i]!='\"'; i++);
-        i++;
-        for (j=i; line[j]!='\"'; j++);
-        testFile = new String (line,i,j-i);
-        for (i=j+1; line[i]!='\"'; i++);
-        i++;
-        for (j=i; line[j]!='\"'; j++);
-        trainFile = new String (line,i,j-i);
-
-        //Getting the path and base name of the results files
-
-        linea = lineasFichero.nextToken();
-        tokens = new StringTokenizer (linea, "=");
-        tokens.nextToken();
-        token = tokens.nextToken();
-
-        //Getting the names of output files
-
-        line = token.getBytes();
-        for (i=0; line[i]!='\"'; i++);
-        i++;
-        for (j=i; line[j]!='\"'; j++);
-        outFile = new String (line,i,j-i);
-
-    } //end-method
-
 
 }
 

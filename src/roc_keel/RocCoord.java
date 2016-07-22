@@ -180,7 +180,7 @@ public class RocCoord
        double auc=0;
        double width=0;
        double widthAcumulate=0;
-       
+       int control=0;
        
        this.coord="coordinates { (0,0)";
        
@@ -195,22 +195,26 @@ public class RocCoord
                width=(x-widthAcumulate);
                widthAcumulate+=width;
                auc=auc+(double)((width*y));
+               control++;
            }
            //false negative
            else if(trueClass[i]=='P')
            {      
+               control=0;
                y+=moveY;  
            }
+            if(1==control)
+            {
             this.coord+="("+x+","+y+")";
+            }
         }   
        
-        this.coord+=" };";
-      
+        this.coord+=" (1,1) };";
         this.auc=auc;
         isPerfect(this.coord);
       
     }
-   
+
    /**
     * <p>
     * Obtain the coordinates when the problem is perfect. 
