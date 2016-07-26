@@ -29,7 +29,6 @@
 package roc_keel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <p> Implements methods to manage the ROC curves. 
@@ -39,20 +38,13 @@ import java.util.List;
  */
 public class RocCoord 
 {
-   protected int tp;
-   protected int fp;
-   protected int tn;
-   protected int fn;
    protected double auc;
    protected String coord;
    
    RocCoord()
    {
-       tp=0;
-       fp=0;
-       tn=0;
-       fn=0;
        coord = null;
+       auc=0;
    }
    
    /**
@@ -76,7 +68,9 @@ public class RocCoord
    
    public void buildTwoClassRoc(double[][] probabilities, String realClasses[])
    {
-       this.sort(probabilities, realClasses, 1);
+       this.sort(probabilities, realClasses, 0);
+       ArrayList<String> output = new ArrayList<>();
+       output=this.distributeExamples(probabilities, realClasses);
        
        char [] trueClass= new char [probabilities.length];
        
@@ -86,19 +80,17 @@ public class RocCoord
        for(int i=0; i<probabilities.length; i++)
        {
            
-          if(realClasses[i].equals("positive"))
+          if(output.get(i).equals("positive"))
           {
              trueClass[i]='P'; 
              p++;
           }     
-          else if(realClasses[i].equals("negative"))
+          else if(output.get(i).equals("negative"))
           {
               trueClass[i]='N';
               n++;
           }
-          
        }
-       
        computeCoordsRoc(trueClass,p,n);
    }
    
@@ -159,8 +151,6 @@ public class RocCoord
        
        this.buildTwoClassRoc(resultProbabilities, resultRealClasses);
    }
-   
-  
    /**
     * <p>
     * Obtain the coordinates of the ROC and the value of the AUC.
@@ -183,7 +173,6 @@ public class RocCoord
        int control=0;
        
        this.coord="coordinates { (0,0)";
-       
        
        for(int i=0; i<trueClass.length;i++)
        {
@@ -284,8 +273,7 @@ public class RocCoord
     {
         normalize[i]=doubles[i]/total;  
     }
-    
-    
+
     return normalize;
   }
   
@@ -298,7 +286,7 @@ public class RocCoord
    * @return min value of the array
    */
   
-  public double min(double[] doubles) 
+    public double min(double[] doubles) 
     { 
         double resultado = 0; 
         for(int i=0; i<doubles.length; i++) 
@@ -311,8 +299,6 @@ public class RocCoord
         
         return resultado; 
     } 
-
-    
   /**
    *<p>
    * Find the max value in a doubles array.
@@ -331,10 +317,142 @@ public class RocCoord
                 resultado = doubles[i]; 
             } 
         } 
-        
         return resultado; 
     }
     
+    public ArrayList<String> distributeExamples(double [][] probabilities, String[] realClasses)
+    {
+        int indexA=0;
+        int indexB=0;
+        int control=0;
+        boolean out=false;
+        int p=0;
+        int n=0;
+        
+        ArrayList<String> output = new ArrayList<String>();
+        
+        double controlProb=probabilities[0][0];
+        
+        for(int i=0;i<probabilities.length && out==false;i++)
+        {
+            indexA=i;
+            
+            if(probabilities[i][0]<controlProb || i==probabilities.length-1)
+            {
+                controlProb=probabilities[i][0];
+                for(int j=indexB; j<indexA;j++)
+                {
+                    if(realClasses[j].equals("positive"))
+                    {
+                        p++;
+                    }
+                    else if(realClasses[j].equals("negative"))
+                    {
+                        n++;
+                    } 
+                    
+                    indexB=j+1;
+                }
+                
+                if(p>n && 0!=n)
+                {
+                    control=p/n;
+                    for(int k=0; k<p+n;)
+                    {
+                        for(int l=0;l<control;l++)
+                        {
+                            output.add("positive");
+                        }
+                        output.add("negative");
+                        k=k+control+1;
+                    }
+                }
+                else if(n>p && 0!=p)
+                {
+                    control=n/p;
+                    for(int k=0; k<p+n;)
+                    {
+                        for(int l=0;l<control;l++)
+                        {
+                            output.add("negative");
+                        }
+                        output.add("positive");
+                        k=k+control+1;
+                    }
+                }
+                else if(p==0)
+                {
+                    for(int k=0; k<n;k++)
+                       output.add("negative");
+                }
+                else if(n==0)
+                {
+                    for(int k=0; k<p;k++)
+                       output.add("positive");
+                }
+                p=0;
+                n=0;
+            }
+            else if(probabilities[i][0]==0)
+            {
+                for(int j=indexB; j<probabilities.length;j++)
+                {
+                    if(realClasses[j].equals("positive"))
+                    {
+                        p++;
+                    }
+                    else if(realClasses[j].equals("negative"))
+                    {
+                        n++;
+                    }    
+                    
+                    indexB=j+1;
+                }
+                
+                if(p>n && 0!=n)
+                {
+                    control=p/n;
+                    for(int k=0; k<p+n;)
+                    {
+                        for(int l=0;l<control;l++)
+                        {
+                            output.add("positive");
+                        }
+                        output.add("negative");
+                        k+=+control+1;
+                    }
+                }
+                else if(n>p && 0!=p)
+                {
+                    control=n/p;
+                    for(int k=0; k<p+n;)
+                    {
+                        for(int l=0;l<control;l++)
+                        {
+                            output.add("negative");
+                        }
+                        output.add("positive");
+                        k+=+control+1;
+                    }
+                }
+                else if(p==0)
+                {
+                    for(int k=0; k<n;k++)
+                       output.add("negative");
+                }
+                else if(n==0)
+                {
+                    for(int k=0; k<n;k++)
+                       output.add("positive");
+                }
+                p=0;
+                n=0;
+                out=true;
+            }
+        }
+        output.add(realClasses[probabilities.length-1]);
+        return output;
+    } 
   /**
    *<p>
    * Sort the probabilities and the realclasses acording to the max value of the probabilities.
@@ -344,10 +462,8 @@ public class RocCoord
    * @param col Column on which sort 
    */
     
-    
     public void sort(double[][] probabilities, String[] realClasses, int col) 
     {
-    
         if (col < 0 || col > probabilities[0].length)
         {
             return;
@@ -359,23 +475,17 @@ public class RocCoord
         for (int i = 0; i < probabilities.length; i++) 
         {
             for (int j = i + 1; j < probabilities.length; j++) 
-            {
-               
-                
-                if (probabilities[i][col]>probabilities[j][col]) 
+            {  
+                if (probabilities[i][col]<probabilities[j][col]) 
                 {
                     
                     auxC = realClasses[i];
                     realClasses[i] = realClasses[j];
                     realClasses[j] = auxC;
-
-                    for (int k = 0; k < probabilities[0].length; k++) 
-                    {
-                        auxP = probabilities[i][k];
-                        probabilities[i][k] = probabilities[j][k];
-                        probabilities[j][k] = auxP;
-                        
-                    }
+                    
+                    auxP = probabilities[i][col];
+                    probabilities[i][col] = probabilities[j][col];
+                    probabilities[j][col]=auxP;
                 }
             }
         }
