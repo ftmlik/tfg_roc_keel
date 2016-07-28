@@ -1,3 +1,4 @@
-name= ROC configuration
+name = ROC configuration
 inputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/input/sencilloprueba.tst" "/Users/joseadiazg/Desktop/TFG/roc_keel/input/sencilloprueba.tst"
-outputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/output/salidaSENCILLOweb.tex"  
+outputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/output/salidaunido.tex"  
+all-points = true

@@ -5,9 +5,13 @@
  */
 package roc_keel;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 import org.core.Files;
 
@@ -19,103 +23,94 @@ public class Roc {
     
     
     
-    protected String trainFile;
-    protected String testFile;
+    protected String[] testFiles;
     protected String outFile;
-
-
-    public String getTrainFile()
-    {
-        return trainFile;
-    }
+    protected boolean allPoints;
+    protected double[][] probabilities;
+    protected String[] realClasses;
+    protected String[] differentClasses;
+    protected boolean markers;
     
-    public String getTestFile()
+    
+    public String[] getTestFile()
     {
-        return testFile;
+        return testFiles;
     }
     public String getOutFile()
     {
         return outFile;
     }
+    public boolean getAllPoints()
+    {
+        return allPoints;
+    }
     
     Roc(String configuration) throws IOException
     {
         
-        this.readConfiguracion(configuration);
+        //this.readConfiguracion(configuration);
+        this.config_read(configuration);
         int nclass=0;
-        String [] curvesTra;
         String [] curvesTest;
         String salida;
         
-        double [] aucTra;
         double [] aucTest;
         boolean twoClass=true;
-        FileParser test = new FileParser(this.testFile);  
-        FileParser tra = new FileParser(this.trainFile);
+         
         RocCoord rocTest = new RocCoord();
-        RocCoord rocTra = new RocCoord();
 
+        //
         
-        test.buildMatrix();
+        FileParser [] test = new FileParser[this.getTestFile().length];
         
-        tra.buildMatrix();
+        for(int i=0; i<test.length;i++)
+        {
+            test[i]=new FileParser(this.testFiles[i]);
+            test[i].buildMatrix();
+        }
+        
+        //UNIMOS TODOS LOS FICHEROS EN UNO SOLO
+        
+        
+        this.unify(test);
+        
                
-        nclass=tra.columns-1;
-        curvesTra= new String[nclass];
+        nclass=test[0].columns-1;
         curvesTest= new String[nclass];
-        aucTra = new double[nclass];
         aucTest = new double[nclass];
         
         
         if(nclass==2)
         {
-            rocTest.buildTwoClassRoc(test.getProbabilities(),test.getRealClasses());
-            rocTra.buildTwoClassRoc(tra.getProbabilities(),tra.getRealClasses());
+            rocTest.buildTwoClassRoc(this.probabilities,this.realClasses, this.allPoints);
         }
         else
         {
             twoClass=false;
             for(int i=0; i<nclass; i++)
             {
-                rocTra.buildClassVsAllClassRoc(tra.getProbabilities(),tra.getRealClasses(),tra.getDifferentClasses(), i);
-                curvesTra[i]=rocTra.getCoord();
-                aucTra[i]=rocTra.auc;
-                
-                rocTest.buildClassVsAllClassRoc(test.getProbabilities(),test.getRealClasses(), test.getDifferentClasses(), i);
+                rocTest.buildClassVsAllClassRoc(this.probabilities,this.realClasses,this.differentClasses, i, this.allPoints);
                 curvesTest[i]=rocTest.getCoord();
                 aucTest[i]=rocTest.auc;
             }
         }
-        
         if(twoClass)
         {
-            salida=test.printLatexHeader("TEST");
-            salida+=test.printROC(rocTest.getCoord());  
-            salida+=test.printAUC(rocTest.auc);
-            
-            salida+=test.printLatexBody("TRAINING");
-            salida+=tra.printROC(rocTra.getCoord());
-            salida+=tra.printAUC(rocTra.auc);
-            salida+=test.printLatexFooter();
+            salida=this.printLatexHeader();
+            salida+=this.printROC(rocTest.getCoord(),0);  
+            salida+=this.printAUC(rocTest.auc);
+            salida+=this.printLatexFooter();
         }
         else
         {
-            salida=test.printLatexHeader("TEST");
+            salida=this.printLatexHeader();
             for(int i=0; i<nclass; i++)
             {
-                salida+=test.printROC(curvesTest[i]);  
-                salida+=test.printAUC(aucTest[i]); 
+                salida+=this.printROC(curvesTest[i],i);  
+                salida+=this.printAUC(aucTest[i]); 
             }
-            salida+=test.printROCS(curvesTest, nclass);
-            salida+=test.printLatexBody("TRAINING");
-            
-            for(int i=0; i<nclass; i++)
-            {
-                salida+=tra.printROC(curvesTra[i]);  
-                salida+=tra.printAUC(aucTra[i]); 
-            }
-            salida+=tra.printROCS(curvesTra, nclass);
-            salida+=test.printLatexFooter();
+            salida+=this.printROCS(curvesTest, nclass);
+            salida+=this.printLatexFooter();
             
         }
        
@@ -138,56 +133,261 @@ public class Roc {
     /** 
      * Reads configuration script, and extracts its contents.
      * 
-     * @param script Name of the configuration script  
+     * @param fileParam Name of the configuration script  
      * 
      */	
-    public void readConfiguracion (String script) 
+
+    private void config_read(String fileParam) 
     {
+        File inputFile = new File(fileParam);
 
-        String fichero, linea, token;
-        StringTokenizer lineasFichero, tokens;
-        byte line[];
-        int i, j;
+	if (inputFile == null || !inputFile.exists()) 
+        {
+            System.out.println("parameter " + fileParam + " file doesn't exists!");
+            System.exit(-1);
+	}
+	// begin the configuration read from file
+	try 
+        {
+            FileReader file_reader = new FileReader(inputFile);
+            BufferedReader buf_reader = new BufferedReader(file_reader);
+            String line;
 
-        fichero = Files.readFile(script);
-        lineasFichero = new StringTokenizer (fichero,"\n");
+            do 
+            {
+		line = buf_reader.readLine();
+            }
+            while (line.length() == 0); // avoid empty lines for processing
+			// ->
+			// produce exec failure
+            String out[] = line.split("name = ");
 
-        lineasFichero.nextToken();
-        linea = lineasFichero.nextToken();
+            //imput data
+            
+            do 
+            {
+		line = buf_reader.readLine();
+            } while (line.length() == 0);
+	
+            out = line.split("inputData = ");
+            out = out[1].split("\\s\"");
+            
+            this.testFiles = new String[out.length];
+            this.testFiles[0]=new String(out[0].substring(1,out[0].length() - 1));
+            
+            for(int i=1; i<out.length;i++)
+            {
+                this.testFiles[i]=new String(out[i].substring(0,out[i].length() - 1));
+            }
+            
+            //output data
+            
+            
+            do 
+            {
+		line = buf_reader.readLine();
+            } while (line.length() == 0);
+            
+            out = line.split("outputData = ");
+            out = out[1].split("\\s\'");
+            this.outFile = new String(out[0].substring(1,out[0].length()-3));
 
-        tokens = new StringTokenizer (linea, "=");
-        tokens.nextToken();
-        token = tokens.nextToken();
-
-        //Getting the names of training and test files
-        //reference file will be used as comparision
-
-        line = token.getBytes();
-        for (i=0; line[i]!='\"'; i++);
-        i++;
-        for (j=i; line[j]!='\"'; j++);
-        testFile = new String (line,i,j-i);
-        for (i=j+1; line[i]!='\"'; i++);
-        i++;
-        for (j=i; line[j]!='\"'; j++);
-        trainFile = new String (line,i,j-i);
-
-        //Getting the path and base name of the results files
-
-        linea = lineasFichero.nextToken();
-        tokens = new StringTokenizer (linea, "=");
-        tokens.nextToken();
-        token = tokens.nextToken();
-
-        //Getting the names of output files
-
-        line = token.getBytes();
-        for (i=0; line[i]!='\"'; i++);
-        i++;
-        for (j=i; line[j]!='\"'; j++);
-        outFile = new String (line,i,j-i);
-
-    } //end-method
+            // parameters
+            
+            do 
+            {
+		line = buf_reader.readLine();
+            } while (line.length() == 0);
+            
+            out = line.split("all-points = ");
+            this.allPoints = (Boolean.valueOf(out[1])); 
+            
+            do 
+            {
+		line = buf_reader.readLine();
+            } while (line.length() == 0);
+            
+            out = line.split("display-markers = ");
+            this.markers = (Boolean.valueOf(out[1])); 
+			
+	} 
+        catch (IOException e) 
+        {
+            System.out.println("IO exception = " + e);
+            e.printStackTrace();
+            System.exit(-1);
+	}
+    }
+    
+    private void unify(FileParser[] files)
+    {
+        
+        double m[][] = files[0].getProbabilities();
+        double m2[][]=null;
+        double m3[][]=null;
+        
+        String s[] = files[0].getRealClasses();
+        String s2[]=null;
+        String s3[]=null;
+        
+        for(int i=1; i<files.length;i++)
+        {
+            m2=files[i].getProbabilities();
+            m3=new double[m2.length+m.length][];
+            System.arraycopy(m, 0, m3, 0, m.length);
+            System.arraycopy(m2, 0, m3, m.length, m2.length);
+            m=m3;
+            
+            s2=files[i].getRealClasses();
+            s3=combine(s,s2);
+            s=s3;
+        }
+        
+        String c[]=files[0].getDifferentClasses();
+        
+        this.probabilities=m3;
+        this.realClasses=s3;
+        this.differentClasses=c;
+        
+        int [] a = new int[this.differentClasses.length];
+        Arrays.fill(a, 0);
+              
+        for(int i=0; i<this.probabilities.length;i++)
+        {
+            System.out.println(probabilities[i][2]);
+        }
+    }
+    
+    public static String[] combine(String[] a, String[] b)
+    {
+        int length = a.length + b.length;
+        String[] result = new String[length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result ;
+    }
+    
+     /**
+     * <p>
+     * Print the header in a latex file.
+     * </p>
+     * @param file The name of the file.
+     */
+    
+    public String printLatexHeader()
+    {
+        return  "\\documentclass{article}\n" +
+                "\\usepackage{pgfplots}\n" +
+                "\\title{KEEL: ROC output}\n" +
+                "\\begin{document}\n" +
+                "\\maketitle\n" +
+                "\\pagebreak[4]\n"+
+                "\\hfill \\break\n" +
+                "Section one: TEST FILE\n"+
+                "\\hfill \\break\n"+
+                "\\hfill \\break\n";
+    }
+    
+    /**
+     * <p>
+     * Print the name of a new plot in the middle of the tex file.
+     * </p>
+     * @param file The name of the file.
+     * @return String with the necessary latex commands. 
+     */
+    
+    public String printLatexBody(String file)
+    {
+        return  "\\hfill \\break\n" +
+                "File: "+file+"\n"+
+                "\\hfill \\break\n";
+    }
+    
+    /**
+     * <p>
+     * Print the auc value in the tex file.
+     * </p>
+     * @param auc auc´s value.
+     * @return String with the necessary latex commands.  
+     */
+    
+    public String printAUC(Double auc)
+    {
+        return  "\\hfill \\break\n" +
+                " AUC:"+auc+"\n" +
+                "\\hfill \\break\n";
+    }
+    
+    /**
+     * <p>
+     * Print the ROC curve in latex.
+     * </p>
+     * @param coords Coordinates of ROC points.
+     * @return String with the necessary latex commands. 
+     */
+    
+    public String printROC(String coords, int c)
+    {
+        String a = "\\begin{tikzpicture}\n" +
+                "\\begin{axis} [xlabel=False positive rate,\n" +
+                "ylabel=True positive rate,"+ 
+                "axis x line=bottom,\n" +
+                "axis y line=left]\n"+
+                "\\addplot ";
+        if(!markers)
+            a+= " [mark=none]";
+        
+        return  a+coords+
+                "\\addlegendentry{Class: "+this.differentClasses[c]+" vs All}\n"+
+                "\\end{axis}\n" +
+                "\\end{tikzpicture}";
+    }
+    
+    /**
+     * <p>
+     * Print more than one ROC curve.
+     * </p>
+     * @param rocCoords String with the coordinates for each ROC curve.
+     * @param numROC Number of ROC curves to plot. 
+     * @return String with the necessary latex commands. 
+     */
+    public String printROCS(String [] rocCoords, int numROC)
+    {
+        String rocs ="";
+        String a;
+        
+        for(int i=0; i<numROC; i++)
+        {
+            rocs+="\\addplot ";
+            a ="";
+            if(!markers)
+                a+= " [mark=none]";
+                    
+            rocs+=a+rocCoords[i]+"\n";
+            rocs+="\\addlegendentry{Class: "+this.differentClasses[i]+" vs All}\n";
+        }
+        
+        return  "\\begin{tikzpicture}\n" +
+                "\\begin{axis} [xlabel=False positive rate,\n" +
+                "ylabel=True positive rate,"+ 
+                "axis x line=bottom,\n" +
+                "axis y line=left]\n"+
+                rocs+
+                "\\end{axis}\n" +
+                "\\end{tikzpicture}";
+    }
+    
+    /**
+     * <p>
+     * Print the necessary commands to close a tex file.
+     * </p>
+     * @return String with the necessary latex commands. 
+     */
+    
+    public String printLatexFooter()
+    {
+        return  "\\end{document}";
+    }
 }
 
 

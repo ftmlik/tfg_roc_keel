@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.5.20)  27 JUL 2016 23:35
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.5.20)  27 JUL 2016 23:52
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**salidasencilloCITIC.tex
-(./salidasencilloCITIC.tex
+**salidaabalondistributeunido.tex
+(./salidaabalondistributeunido.tex
 LaTeX2e <2015/01/01>
 Babel <3.9l> and hyphenation patterns for 79 languages loaded.
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/article.cls
@@ -465,8 +465,8 @@ File: tikzlibraryplotmarks.code.tex 2008/01/09 v3.0.0 (rcs-revision 1.1)
 (/usr/local/texlive/2015/texmf-dist/tex/generic/pgf/libraries/pgflibraryplotmar
 ks.code.tex
 File: pgflibraryplotmarks.code.tex 2013/07/20 v3.0.0 (rcs-revision 1.13)
-))) (./salidasencilloCITIC.aux)
-\openout1 = `salidasencilloCITIC.aux'.
+))) (./salidaabalondistributeunido.aux)
+\openout1 = `salidaabalondistributeunido.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 4.
 LaTeX Font Info:    ... okay on input line 4.
@@ -562,39 +562,34 @@ LaTeX Warning: No \author given.
 
 {/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 15.
+(Font)              <7> on input line 16.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 15.
+(Font)              <5> on input line 16.
 
-Underfull \hbox (badness 10000) in paragraph at lines 7--30
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 7--30
+Underfull \hbox (badness 10000) in paragraph at lines 7--20
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7--30
+Underfull \hbox (badness 10000) in paragraph at lines 7--20
 
  []
 
-[2] (./salidasencilloCITIC.aux) ) 
+[2] (./salidaabalondistributeunido.aux) ) 
 Here is how much of TeX's memory you used:
- 20605 strings out of 493089
- 541938 string characters out of 6134842
- 699766 words of memory out of 5000000
- 23759 multiletter control sequences out of 15000+600000
+ 20659 strings out of 493089
+ 543319 string characters out of 6134842
+ 696766 words of memory out of 5000000
+ 23813 multiletter control sequences out of 15000+600000
  6675 words of font info for 24 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 62i,10n,103p,778b,1800s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2015/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1
-/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmr12.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmr17.pfb>
-Output written on salidasencilloCITIC.pdf (2 pages, 44062 bytes).
+ 62i,18n,103p,1079b,2141s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2015/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2015/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2015/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2015/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr17.pfb>
+Output written on salidaabalondistributeunido.pdf (2 pages, 46145 bytes).
 PDF statistics:
  30 PDF objects out of 1000 (max. 8388607)
  21 compressed objects within 1 object stream

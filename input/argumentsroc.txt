@@ -1,3 +1,5 @@
-name= ROC configuration
+name = ROC configuration
 inputData = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/KNN/Prob-resultadoKNN.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/KNN/Prob-resultadoKNN.tra"
-outputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/output/salidaabalondistribute.tex"  
+outputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/output/salidaunidoCITIC.tex"  
+all-points = True
+display-markers = False

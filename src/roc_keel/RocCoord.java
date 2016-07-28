@@ -60,17 +60,36 @@ public class RocCoord
    
    /**
     * <p>
+    * Get the coords of the roc curve.
+    * </p>
+    * @return Double with AUC value of the ROC curve. 
+    */
+   
+   public double getAuc()
+   {
+       return this.auc;
+   }
+   
+   /**
+    * <p>
     * Compute the number of elements for each class.
     * </p>
     * @param probabilities The matrix with the probabilities. 
     * @param realClasses Array of Strings with the real class for each pair of probabilities. 
     */
    
-   public void buildTwoClassRoc(double[][] probabilities, String realClasses[])
+   public void buildTwoClassRoc(double[][] probabilities, String realClasses[], boolean allPoints)
    {
        this.sort(probabilities, realClasses, 0);
        ArrayList<String> output = new ArrayList<>();
        output=this.distributeExamples(probabilities, realClasses);
+       
+       System.out.println("DIVISION\n\n\n\n");
+       for(int i=0; i<output.size(); i++)
+       {
+           System.out.println(output.get(i));
+       }
+       
        
        char [] trueClass= new char [probabilities.length];
        
@@ -91,7 +110,15 @@ public class RocCoord
               n++;
           }
        }
-       computeCoordsRoc(trueClass,p,n);
+       if(allPoints)
+       {
+           computeCoordsRocAllPoints(trueClass, p, n);
+       }
+       else
+       {
+           computeCoordsRoc(trueClass,p,n);
+       }
+       
    }
    
    /**
@@ -106,7 +133,7 @@ public class RocCoord
    
    
    public void buildClassVsAllClassRoc(double[][] probabilities, String[] realClasses, 
-           String[] differentClasses, int classA)
+           String[] differentClasses, int classA, boolean allPoints)
    {
        double[][] resultProbabilities = new double [probabilities.length][2];
        String []  resultRealClasses = new String [probabilities.length];
@@ -149,11 +176,11 @@ public class RocCoord
             max=0;
        }
        
-       this.buildTwoClassRoc(resultProbabilities, resultRealClasses);
+       this.buildTwoClassRoc(resultProbabilities, resultRealClasses, allPoints);
    }
    /**
     * <p>
-    * Obtain the coordinates of the ROC and the value of the AUC.
+    * Obtain the value of the AUC and the coordinates of the ROC using the different trend points.
     * </p>
     * @param trueClass Array with the value of the real class for each row. 
     * @param p Number of positive examples.
@@ -203,7 +230,53 @@ public class RocCoord
         isPerfect(this.coord);
       
     }
-
+   /**
+    * <p>
+    * Obtain the value of the AUC and the coordinates of the ROC with all points.
+    * </p>
+    * @param trueClass Array with the value of the real class for each row. 
+    * @param p Number of positive examples.
+    * @param n  Number of negative examples.
+    */
+   
+   public void computeCoordsRocAllPoints(char [] trueClass, int p, int n )
+   {
+       
+       double moveX=1.0/n;
+       double moveY=1.0/p;
+       double x=0;
+       double y=0;
+       double auc=0;
+       double width=0;
+       double widthAcumulate=0;
+       
+       this.coord="coordinates { (0,0)";
+       
+       for(int i=0; i<trueClass.length;i++)
+       {
+          
+           if(trueClass[i]=='N')
+           {
+               x+=moveX;
+               
+               width=(x-widthAcumulate);
+               widthAcumulate+=width;
+               auc=auc+(double)((width*y));
+           }
+           //false negative
+           else if(trueClass[i]=='P')
+           {      
+               y+=moveY;  
+           }
+           this.coord+="("+x+","+y+")";
+        }   
+       
+        this.coord+="};";
+        this.auc=auc;
+        isPerfect(this.coord);
+      
+    }
+   
    /**
     * <p>
     * Obtain the coordinates when the problem is perfect. 
@@ -320,6 +393,15 @@ public class RocCoord
         return resultado; 
     }
     
+    /**
+   *<p>
+   * Redistribute the examples with the same probabilitie. 
+   *</p>
+   * @param realClasses The array with the strings (real classes) to sort. 
+   * @param probabilities The matrix with the probabilities to sort. 
+   */
+    
+    
     public ArrayList<String> distributeExamples(double [][] probabilities, String[] realClasses)
     {
         int indexA=0;
@@ -337,7 +419,7 @@ public class RocCoord
         {
             indexA=i;
             
-            if(probabilities[i][0]<controlProb || i==probabilities.length-1)
+            if(probabilities[i][0]<controlProb || i==probabilities.length-1 || probabilities[i][0]!=0)
             {
                 controlProb=probabilities[i][0];
                 for(int j=indexB; j<indexA;j++)
@@ -393,7 +475,7 @@ public class RocCoord
                 p=0;
                 n=0;
             }
-            else if(probabilities[i][0]==0)
+            else if(probabilities[i][0]==0.0)
             {
                 for(int j=indexB; j<probabilities.length;j++)
                 {
@@ -405,10 +487,8 @@ public class RocCoord
                     {
                         n++;
                     }    
-                    
                     indexB=j+1;
                 }
-                
                 if(p>n && 0!=n)
                 {
                     control=p/n;
