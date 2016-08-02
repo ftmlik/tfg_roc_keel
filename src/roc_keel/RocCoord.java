@@ -395,6 +395,22 @@ public class RocCoord
     
     /**
    *<p>
+   * Get a boolean value if the number is pair or not.
+   *</p>
+   *
+   * @param number the value to know if is pair or not. 
+   */
+    
+    public boolean isPair(int number)
+    {
+        if(number%2==0)
+              return true;
+        else
+              return false;
+    }
+    
+    /**
+   *<p>
    * Redistribute the examples with the same probabilitie. 
    *</p>
    * @param realClasses The array with the strings (real classes) to sort. 
@@ -446,7 +462,7 @@ public class RocCoord
                             output.add("positive");
                         }
                         output.add("negative");
-                        k=k+control+1;
+                        k=k+control+1; 
                     }
                 }
                 else if(n>p && 0!=p)
@@ -558,7 +574,6 @@ public class RocCoord
             {  
                 if (probabilities[i][col]<probabilities[j][col]) 
                 {
-                    
                     auxC = realClasses[i];
                     realClasses[i] = realClasses[j];
                     realClasses[j] = auxC;

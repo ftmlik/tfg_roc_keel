@@ -332,13 +332,13 @@ public class Roc {
                 "\\begin{axis} [xlabel=False positive rate,\n" +
                 "ylabel=True positive rate,"+ 
                 "axis x line=bottom,\n" +
-                "axis y line=left]\n"+
+                "axis y line=left,cycle list name=color list, legend pos=south east]\n"+
                 "\\addplot ";
         if(!markers)
             a+= " [mark=none]";
         
         return  a+coords+
-                "\\addlegendentry{Class: "+this.differentClasses[c]+" vs All}\n"+
+                "\\addlegendentry{"+this.differentClasses[c]+" vs All}\n"+
                 "\\end{axis}\n" +
                 "\\end{tikzpicture}";
     }
@@ -364,14 +364,14 @@ public class Roc {
                 a+= " [mark=none]";
                     
             rocs+=a+rocCoords[i]+"\n";
-            rocs+="\\addlegendentry{Class: "+this.differentClasses[i]+" vs All}\n";
+            rocs+="\\addlegendentry{"+this.differentClasses[i]+" vs All}\n";
         }
         
         return  "\\begin{tikzpicture}\n" +
                 "\\begin{axis} [xlabel=False positive rate,\n" +
                 "ylabel=True positive rate,"+ 
                 "axis x line=bottom,\n" +
-                "axis y line=left]\n"+
+                "axis y line=left  , cycle list name=color list, legend style={at={(0.5,-0.17)},anchor=north,legend cell align=left}]\n"+
                 rocs+
                 "\\end{axis}\n" +
                 "\\end{tikzpicture}";
