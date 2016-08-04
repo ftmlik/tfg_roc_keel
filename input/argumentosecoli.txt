@@ -1,5 +1,5 @@
 name = ROC configuration
 inputData = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/KNN/Prob-resultadoKNN1.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/KNN/Prob-resultadoKNN2.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/KNN/Prob-resultadoKNN3.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/KNN/Prob-resultadoKNN4.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/KNN/Prob-resultadoKNN3.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/KNN/Prob-resultadoKNN5.tst"
-outputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/output/salidaecolicritico.tex"  
+outputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/output/duplicadocriticos.tex"  
 all-points = false
 display-markers = true

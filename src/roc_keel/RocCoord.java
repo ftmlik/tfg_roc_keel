@@ -84,13 +84,6 @@ public class RocCoord
        ArrayList<String> output = new ArrayList<>();
        output=this.distributeExamples(probabilities, realClasses);
        
-       System.out.println("DIVISION\n\n\n\n");
-       for(int i=0; i<output.size(); i++)
-       {
-           System.out.println(output.get(i));
-       }
-       
-       
        char [] trueClass= new char [probabilities.length];
        
        int p=0;
@@ -269,8 +262,7 @@ public class RocCoord
                y+=moveY;  
            }
            this.coord+="("+x+","+y+")";
-        }   
-       
+        }  
         this.coord+="};";
         this.auc=auc;
         isPerfect(this.coord);
@@ -393,21 +385,6 @@ public class RocCoord
         return resultado; 
     }
     
-    /**
-   *<p>
-   * Get a boolean value if the number is pair or not.
-   *</p>
-   *
-   * @param number the value to know if is pair or not. 
-   */
-    
-    public boolean isPair(int number)
-    {
-        if(number%2==0)
-              return true;
-        else
-              return false;
-    }
     
     /**
    *<p>
@@ -454,6 +431,7 @@ public class RocCoord
                 
                 if(p>n && 0!=n)
                 {
+                    
                     control=p/n;
                     for(int k=0; k<p+n;)
                     {
@@ -461,8 +439,13 @@ public class RocCoord
                         {
                             output.add("positive");
                         }
+                        k=k+control+1;
                         output.add("negative");
-                        k=k+control+1; 
+                        for(int l=0;l<control;l++)
+                        {
+                            output.add("positive");
+                        }
+                        k+=control; 
                     }
                 }
                 else if(n>p && 0!=p)
@@ -474,8 +457,13 @@ public class RocCoord
                         {
                             output.add("negative");
                         }
-                        output.add("positive");
                         k=k+control+1;
+                        output.add("positive");
+                        for(int l=0;l<control;l++)
+                        {
+                            output.add("negative");
+                        }
+                        k+=control;
                     }
                 }
                 else if(p==0)
@@ -514,8 +502,15 @@ public class RocCoord
                         {
                             output.add("positive");
                         }
-                        output.add("negative");
+                       
                         k+=+control+1;
+                        output.add("negative");
+                        for(int l=0;l<control;l++)
+                        {
+                            output.add("positive");
+                        }
+                       
+                        k+=control;
                     }
                 }
                 else if(n>p && 0!=p)
@@ -527,8 +522,15 @@ public class RocCoord
                         {
                             output.add("negative");
                         }
-                        output.add("positive");
+                        
                         k+=+control+1;
+                        output.add("positive");
+                        for(int l=0;l<control;l++)
+                        {
+                            output.add("negative");
+                        }
+                        
+                        k+=control;
                     }
                 }
                 else if(p==0)

@@ -62,6 +62,39 @@ public class FileParser
     
     /**
      * <p>
+     * Set the probabilities.
+     * </p>
+     * @param  prob A matrix of strings with the probabilities
+     */
+    public void setProbabilities(double [][] prob)
+    {
+        this.probabilities=prob;
+    }
+    /**
+     * <p>
+     * Set the real Classes.
+     * </p>
+     * @param classes Array of strings with the real class for each  row of probabilities
+     */
+    public void setRealClasses(String [] classes)
+    {
+        this.realClasses=classes;
+    }
+    
+    
+    /**
+     * <p>
+     * Set the different classes.
+     * </p>
+     * @param dclasses Array of strings with nominal values of the different classes 
+     */
+    public void setDifferentClasses( String [] dclasses)
+    {
+        this.differentClasses=dclasses;
+    }
+    
+    /**
+     * <p>
      * Get the probabilities.
      * </p>
      * @return A matrix of strings with the probabilities

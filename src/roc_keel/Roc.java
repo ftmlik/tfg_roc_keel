@@ -32,14 +32,32 @@ public class Roc {
     protected boolean markers;
     
     
+    /**
+     * <p>
+     * Get the testFile.
+     * </p>
+     * @return A array of strings with the names of test files
+     */
     public String[] getTestFile()
     {
         return testFiles;
     }
+    /**
+     * <p>
+     * Get the outFile.
+     * </p>
+     * @return Strings with the names of utput file. 
+     */
     public String getOutFile()
     {
         return outFile;
     }
+    /**
+     * <p>
+     * Get value of the param All Points
+     * </p>
+     * @return Boolean. 
+     */
     public boolean getAllPoints()
     {
         return allPoints;
@@ -62,19 +80,33 @@ public class Roc {
         //
         
         FileParser [] test = new FileParser[this.getTestFile().length];
-        
+        FileParser [] testReplicate = new FileParser[2];
         for(int i=0; i<test.length;i++)
         {
             test[i]=new FileParser(this.testFiles[i]);
             test[i].buildMatrix();
         }
         
-        //UNIMOS TODOS LOS FICHEROS EN UNO SOLO
-        
-        
         this.unify(test);
         
-               
+        
+        FileParser example1 = new FileParser();
+        FileParser example2 = new FileParser();
+        
+        example1.setProbabilities(this.probabilities);
+        example2.setProbabilities(this.probabilities);
+        example1.setDifferentClasses(this.differentClasses);
+        example2.setDifferentClasses(this.differentClasses);
+        example1.setRealClasses(this.realClasses);
+        example2.setRealClasses(this.realClasses);
+        
+        testReplicate[0]=example1;
+        testReplicate[1]=example2;
+        
+        
+        this.unify(testReplicate);
+        //replicate the examples
+              
         nclass=test[0].columns-1;
         curvesTest= new String[nclass];
         aucTest = new double[nclass];
@@ -128,8 +160,7 @@ public class Roc {
             e.printStackTrace();
         }
     }
-    
-    
+
     /** 
      * Reads configuration script, and extracts its contents.
      * 
@@ -248,14 +279,6 @@ public class Roc {
         this.probabilities=m3;
         this.realClasses=s3;
         this.differentClasses=c;
-        
-        int [] a = new int[this.differentClasses.length];
-        Arrays.fill(a, 0);
-              
-        for(int i=0; i<this.probabilities.length;i++)
-        {
-            System.out.println(probabilities[i][2]);
-        }
     }
     
     public static String[] combine(String[] a, String[] b)
