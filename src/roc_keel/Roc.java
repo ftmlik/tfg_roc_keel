@@ -337,7 +337,9 @@ public class Roc {
     public String printAUC(Double auc)
     {
         return  "\\hfill \\break\n" +
+                "\\hfill \\break\n" +
                 " AUC:"+auc+"\n" +
+                "\\hfill \\break\n" +
                 "\\hfill \\break\n";
     }
     
@@ -355,7 +357,7 @@ public class Roc {
                 "\\begin{axis} [xlabel=False positive rate,\n" +
                 "ylabel=True positive rate,"+ 
                 "axis x line=bottom,\n" +
-                "axis y line=left,cycle list name=color list, legend pos=south east]\n"+
+                "axis y line=left, legend pos=south east]\n"+
                 "\\addplot ";
         if(!markers)
             a+= " [mark=none]";
@@ -383,8 +385,6 @@ public class Roc {
         {
             rocs+="\\addplot ";
             a ="";
-            if(!markers)
-                a+= " [mark=none]";
                     
             rocs+=a+rocCoords[i]+"\n";
             rocs+="\\addlegendentry{"+this.differentClasses[i]+" vs All}\n";

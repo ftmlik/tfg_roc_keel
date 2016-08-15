@@ -143,6 +143,8 @@ public class RocCoord
             if(realClasses[i].equals(differentClasses[classA]))
             {
                 resultRealClasses[i]="positive";
+                
+                
             }
             else
             {
@@ -168,7 +170,6 @@ public class RocCoord
             resultProbabilities[i][1]=norm[1];
             max=0;
        }
-       
        this.buildTwoClassRoc(resultProbabilities, resultRealClasses, allPoints);
    }
    /**
