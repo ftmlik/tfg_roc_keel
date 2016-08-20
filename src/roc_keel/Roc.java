@@ -338,7 +338,7 @@ public class Roc {
     {
         return  "\\hfill \\break\n" +
                 "\\hfill \\break\n" +
-                " AUC:"+auc+"\n" +
+                " Area Under Curve (AUC):"+auc+"\n" +
                 "\\hfill \\break\n" +
                 "\\hfill \\break\n";
     }
