@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p> Implements methods to manage the imput files and the output files in latex. 
+ * <p> Implements methods to manage the imput files. 
  * @author joseangeldiazg (University of Granada) 
  * @version 1.0
  * </p>

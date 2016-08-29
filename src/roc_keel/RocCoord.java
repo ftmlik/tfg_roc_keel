@@ -193,36 +193,42 @@ public class RocCoord
        double widthAcumulate=0;
        int control=0;
        
-       this.coord="coordinates { (0,0)";
-       
-       for(int i=0; i<trueClass.length;i++)
+       if(p!=0 && n!=0)
        {
-          
-           if(trueClass[i]=='N')
-           {
-               x+=moveX;
-               
-               width=(x-widthAcumulate);
-               widthAcumulate+=width;
-               auc=auc+(double)((width*y));
-               control++;
-           }
-           //false negative
-           else if(trueClass[i]=='P')
-           {      
-               control=0;
-               y+=moveY;  
-           }
-            if(1==control)
+            this.coord="coordinates { (0,0)";
+
+            for(int i=0; i<trueClass.length;i++)
             {
-            this.coord+="("+x+","+y+")";
-            }
-        }   
-       
-        this.coord+=" (1,1) };";
-        this.auc=auc;
-        isPerfect(this.coord);
-      
+
+                if(trueClass[i]=='N')
+                {
+                    x+=moveX;
+
+                    width=(x-widthAcumulate);
+                    widthAcumulate+=width;
+                    auc=auc+(double)((width*y));
+                    control++;
+                }
+                //false negative
+                else if(trueClass[i]=='P')
+                {      
+                    control=0;
+                    y+=moveY;  
+                }
+                 if(1==control)
+                 {
+                 this.coord+="("+x+","+y+")";
+                 }
+             }   
+
+             this.coord+=" (1,1) };";
+             this.auc=auc;
+             isPerfect(this.coord);
+       }
+       else
+       {
+           makeRandom();
+       }  
     }
    /**
     * <p>
@@ -244,30 +250,37 @@ public class RocCoord
        double width=0;
        double widthAcumulate=0;
        
-       this.coord="coordinates { (0,0)";
-       
-       for(int i=0; i<trueClass.length;i++)
+       if(p!=0 && n!=0)
        {
-          
-           if(trueClass[i]=='N')
-           {
-               x+=moveX;
-               
-               width=(x-widthAcumulate);
-               widthAcumulate+=width;
-               auc=auc+(double)((width*y));
-           }
-           //false negative
-           else if(trueClass[i]=='P')
-           {      
-               y+=moveY;  
-           }
-           this.coord+="("+x+","+y+")";
-        }  
-        this.coord+="};";
-        this.auc=auc;
-        isPerfect(this.coord);
-      
+       
+            this.coord="coordinates { (0,0)";
+
+            for(int i=0; i<trueClass.length;i++)
+            {
+
+                if(trueClass[i]=='N')
+                {
+                    x+=moveX;
+
+                    width=(x-widthAcumulate);
+                    widthAcumulate+=width;
+                    auc=auc+(double)((width*y));
+                }
+                //false negative
+                else if(trueClass[i]=='P')
+                {      
+                    y+=moveY;  
+                }
+                this.coord+="("+x+","+y+")";
+             }  
+             this.coord+="};";
+             this.auc=auc;
+             isPerfect(this.coord);
+       }
+       else
+       {
+           makeRandom();
+       }  
     }
    
    /**
@@ -284,6 +297,18 @@ public class RocCoord
            this.coord="coordinates { (0,0)(0,1)(1,1)};";
            this.auc=1;
        }
+   }
+   
+   /**
+    * <p>
+    * Generates ramdom coordinates. 
+    * </p>
+    */
+   
+   public void makeRandom()
+   {
+           this.coord="coordinates { (0,0)(1,1)};";
+           this.auc=0.5;
    }
    
   /**

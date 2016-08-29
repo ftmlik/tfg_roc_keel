@@ -35,8 +35,9 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 /**
- *
- * @author joseadiazg
+ * Main. 
+ * @author joseangeldiazg (University Of Granada)
+ * @version 1.0
  */
 public class RocKeel
 {

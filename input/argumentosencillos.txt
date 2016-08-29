@@ -1,4 +1,5 @@
 name = ROC configuration
-inputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/input/sencilloprueba.tst" "/Users/joseadiazg/Desktop/TFG/roc_keel/input/sencilloprueba.tst"
-outputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/output/salidaunido.tex"  
-all-points = true
+inputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/input/sencilloprueba.tst"
+outputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/outputfinal/salidatrapezoide.tex"  
+all-points = false
+display-markers = true

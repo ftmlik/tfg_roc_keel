@@ -1,0 +1,5 @@
+algorithm = ROC Curves of test predictions
+inputData = "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/C45-C.glass/Prob-result0.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/C45-C.glass/Prob-result1.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/C45-C.glass/Prob-result2.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/C45-C.glass/Prob-result3.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/C45-C.glass/Prob-result4.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/C45-C.glass/Prob-result5.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/C45-C.glass/Prob-result6.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/C45-C.glass/Prob-result7.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/C45-C.glass/Prob-result8.tst" "/Users/joseadiazg/Desktop/TFG/probabilistic_keel/output/C45-C.glass/Prob-result9.tst" 
+outputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/pruebas/glass.tex"   
+all-points = false
+display-markers = false

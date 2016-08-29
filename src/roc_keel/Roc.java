@@ -16,8 +16,9 @@ import java.util.StringTokenizer;
 import org.core.Files;
 
 /**
- *
- * @author joseadiazg
+ * Implements the main funcionality. 
+ * @author joseangeldiazg (University Of Granada)
+ * @version 1.0
  */
 public class Roc {
     
@@ -87,25 +88,34 @@ public class Roc {
             test[i].buildMatrix();
         }
         
-        this.unify(test);
-        
-        
-        FileParser example1 = new FileParser();
-        FileParser example2 = new FileParser();
-        
-        example1.setProbabilities(this.probabilities);
-        example2.setProbabilities(this.probabilities);
-        example1.setDifferentClasses(this.differentClasses);
-        example2.setDifferentClasses(this.differentClasses);
-        example1.setRealClasses(this.realClasses);
-        example2.setRealClasses(this.realClasses);
-        
-        testReplicate[0]=example1;
-        testReplicate[1]=example2;
-        
-        
-        this.unify(testReplicate);
-        //replicate the examples
+        if(test.length>1)
+        {   
+            this.unify(test);
+
+            //replicate the examples
+
+            FileParser example1 = new FileParser();
+            FileParser example2 = new FileParser();
+
+            example1.setProbabilities(this.probabilities);
+            example2.setProbabilities(this.probabilities);
+            example1.setDifferentClasses(this.differentClasses);
+            example2.setDifferentClasses(this.differentClasses);
+            example1.setRealClasses(this.realClasses);
+            example2.setRealClasses(this.realClasses);
+
+            testReplicate[0]=example1;
+            testReplicate[1]=example2;
+
+
+            this.unify(testReplicate);
+        }
+        else
+        {
+            this.probabilities=test[0].getProbabilities();
+            this.differentClasses=test[0].getDifferentClasses();
+            this.realClasses=test[0].getRealClasses();
+        }
               
         nclass=test[0].columns-1;
         curvesTest= new String[nclass];
@@ -208,11 +218,16 @@ public class Roc {
             
             for(int i=1; i<out.length;i++)
             {
-                this.testFiles[i]=new String(out[i].substring(0,out[i].length() - 1));
+                if(i!=out.length-1)
+                    this.testFiles[i]=new String(out[i].substring(0,out[i].length() - 1));
+                else
+                    this.testFiles[i]= new String(out[i]);
             }
             
+            //the last file has one more blank space
+            int bSpaces=getBlankSpaces(this.testFiles[out.length-1]);
+            this.testFiles[out.length-1]=new String(out[out.length-1].substring(0,out[out.length-1].length()- (bSpaces+1)));
             //output data
-            
             
             do 
             {
@@ -221,10 +236,11 @@ public class Roc {
             
             out = line.split("outputData = ");
             out = out[1].split("\\s\'");
-            this.outFile = new String(out[0].substring(1,out[0].length()-3));
+            this.outFile = new String(out[0]);
+            bSpaces=getBlankSpaces(this.outFile);
+            this.outFile = new String(out[0].substring(1,out[0].length()-(bSpaces+1)));
 
             // parameters
-            
             do 
             {
 		line = buf_reader.readLine();
@@ -410,6 +426,30 @@ public class Roc {
     public String printLatexFooter()
     {
         return  "\\end{document}";
+    }
+    
+    /**
+     * <p>
+     * Get the number of blank spaces at the end. 
+     * </p>
+     * @param lastFile Last imput file
+     * @return Int with the number of blank spaces at the end of the String.
+     */
+    
+    public int getBlankSpaces(String lastFile)
+    {
+        //count the number of blank spaces 
+        int bSpaces=0;
+        char[] charArray = lastFile.toCharArray();
+        
+        for(int i=0; i<charArray.length; i++)
+        {
+            if(charArray[i]==' ')
+            {
+                bSpaces++;
+            }
+        } 
+        return bSpaces;      
     }
 }
 
