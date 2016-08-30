@@ -26,7 +26,7 @@
 	along with this program.  If not, see http://www.gnu.org/licenses/
   
 **********************************************************************/
-package roc_keel;
+package keel.Algorithms.Statistical_Tests.Classification.roc_keel;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

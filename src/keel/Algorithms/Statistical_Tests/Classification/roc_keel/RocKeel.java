@@ -27,7 +27,7 @@
   
 **********************************************************************/
 
-package roc_keel;
+package keel.Algorithms.Statistical_Tests.Classification.roc_keel;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
