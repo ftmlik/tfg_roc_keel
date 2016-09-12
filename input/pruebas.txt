@@ -1,0 +1,5 @@
+name = ROC configuration
+inputData = /Users/joseadiazg/Desktop/TFG/roc_keel/input/distribuidos.tst"
+outputData = "/Users/joseadiazg/Desktop/TFG/roc_keel/pruebas/distribuidos.tex"  
+all-points = true
+display-markers = true

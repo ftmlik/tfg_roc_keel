@@ -1,0 +1,11 @@
+true-class positive negative
+positive   0.9 0.1 
+positive   0.9 0.1 
+negative   0.9 0.1 
+positive   0.9 0.1 
+negative   0.9 0.1 
+negative   0.9 0.1 
+positive   0.9 0.1 
+positive   0.9 0.1 
+negative   0.9 0.1 
+negative   0.9 0.1
